@@ -15,7 +15,7 @@
 #include "LoggerMmap.h"
 #include "LoggerBuffer.h"
 
-namespace tlog {
+namespace shiny {
 
     class LoggerImpl : public Logger {
         public:
@@ -52,6 +52,7 @@ namespace tlog {
             LogMode _logMode;
 
             LoggerMmap _logMmap;
+            
             char *_logBufferPtr;
             LoggerBuffer *_logBuffer;
 

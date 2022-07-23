@@ -3,7 +3,7 @@
 #include "LoggerImpl.h"
 
 
-namespace tlog{
+namespace shiny{
 
     const char* LoggerImpl::LOG_FILE_SUFFIX = ".shiny";
 
@@ -32,7 +32,7 @@ namespace tlog{
         // memory map
         bool res = memoryMap();
         if (res) {
-
+            _logBuffer = new LoggerBuffer(_logMmap.getPointer(), LOG_MEM_MAP_SIZE);
         } else {    // memory map failed, use memory buffer
             mode = LogSync;
             _logBufferPtr = new char[LOG_MEM_MAP_SIZE];

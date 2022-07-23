@@ -1,1 +1,0 @@
-/usr/bin/c++ CMakeFiles/LOGGER.dir/main.cpp.o CMakeFiles/LOGGER.dir/src/LoggerBuffer.cpp.o CMakeFiles/LOGGER.dir/src/LoggerImpl.cpp.o CMakeFiles/LOGGER.dir/src/LoggerMmap.cpp.o -o ../bin/LOGGER 

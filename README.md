@@ -40,7 +40,6 @@ $ cd Shiny/build
 $ cmake ..
 
 $ make
-
 ```
 
 ## 🥇 性能测试

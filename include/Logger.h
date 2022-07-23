@@ -8,7 +8,7 @@
 
 
 
-namespace tlog {
+namespace shiny {
 
     typedef enum {
         LOG_DEBUG,

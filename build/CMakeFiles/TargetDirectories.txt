@@ -1,3 +1,0 @@
-/home/lighthouse/Shiny/build/CMakeFiles/rebuild_cache.dir
-/home/lighthouse/Shiny/build/CMakeFiles/LOGGER.dir
-/home/lighthouse/Shiny/build/CMakeFiles/edit_cache.dir

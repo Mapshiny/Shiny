@@ -2,8 +2,6 @@
 
 
 
-
-
 LoggerMmap::~LoggerMmap() {
     if (_ptr != nullptr) {
         munmap();
