@@ -1,13 +1,13 @@
 <div align="center">
 
 
-<div align="center">
 ## Shiny：基于mmap的高性能、高可用日志收集库
 
 ![](https://img.shields.io/badge/release-v1.0-blue.svg)
 ![](https://img.shields.io/badge/build-passing-green.svg)
 ![](https://img.shields.io/badge/dependencies-up%20to%20date-green.svg)
 ![](https://img.shields.io/badge/license-MIT-blue.svg)
+
 </div>
 
 -----
