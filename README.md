@@ -58,7 +58,7 @@ $ make
 待续...
 
 
-## 📚 文档<span id="docss" hidden> docs </span>
+## 📚 <span id="docss">文档</span>
 
 * mmap
   * [什么是mmap](./docs/mmap.md)
