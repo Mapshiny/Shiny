@@ -51,7 +51,21 @@ $ make
 
 ## 📚 文档
 
+* mmap
+  * [什么是mmap?](./doc/mmap.md)
+
+* Shiny基本使用
+  * [Shiny的简单使用](./doc/shiny.md)
+  
+* example
+
 待续...
+
+## 参考资料
+
+1. [微信终端跨平台组件 mars 系列(一) - 高性能日志模块xlog](https://mp.weixin.qq.com/s/cnhuEodJGIbdodh0IxNeXQ)
+2. [微信终端跨平台组件 mars 系列(二) - 信令传输超时设计](https://mp.weixin.qq.com/s/cnhuEodJGIbdodh0IxNeXQ)
+3. [微信终端跨平台组件 mars 系列 - 我们如约而至](https://mp.weixin.qq.com/s/JVsVrKwJlOwoB3Rz0e17wQ)
 
 ## 致谢
 
