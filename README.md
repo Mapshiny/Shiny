@@ -18,7 +18,7 @@ Shiny 是基于[mmap](./docs/mmap.md)的Linux轻量级日志模块, 目前仅支
 
 项目仅对mmap进行了一些日志文件IO的封装, 提供了一些简单的日志接口, 主要包括：获取单例的logger、配置日志文件路径、设置日志等级等。同时, 对多线程打印日志进行了并发控制, 避免多线程打印日志产生的race condition。
 
-更多关于Shiny和mmap的相关知识, 参考[Shiny的文档](#docs)
+更多关于Shiny和mmap的相关知识, 参考[Shiny的文档](#docss)
 
 
 ## ✨ 特征
@@ -57,8 +57,8 @@ $ make
 
 待续...
 
-<span id="docs" hidden> docs </span>
-## 📚 文档
+
+## 📚 文档<span id="docss" hidden> docs </span>
 
 * mmap
   * [什么是mmap](./docs/mmap.md)
