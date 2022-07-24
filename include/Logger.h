@@ -5,7 +5,7 @@
 
 #include <time.h>
 #include <stdint.h>
-
+#include <string>
 
 
 namespace shiny {
@@ -40,10 +40,13 @@ namespace shiny {
         static Logger *getLogger();
 
         virtual ~Logger() {};
-        virtual void logOpen(const char *logdir, const char* mmapDir, const char *logname, LogMode mode) = 0;
-        virtual void log(LoggerInfo *info, const char *msg) = 0;
-        virtual void setLogMode(LogMode mode) = 0;
+        virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) = 0;
+        virtual void log(const std::string& data, const char *msg) = 0;
 
+        virtual void flush();
+        virtual void close();
+
+        virtual void setLogMode(LogMode mode) = 0;
         virtual void setLogLevel(LogLevel level) = 0;
         virtual void setLogLevel(const char *level) = 0;
         virtual void setLogLevel(int level) = 0;
@@ -51,6 +54,8 @@ namespace shiny {
 
         virtual void logPrint(LoggerInfo *info, const char *msg) = 0;
         virtual void logPrintf(LoggerInfo *info, const char *fmt, ...) = 0;
+
+        virtual void setConsoleOutput(bool enable) = 0;
     };
 }
 

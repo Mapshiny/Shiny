@@ -1,25 +1,19 @@
 #include "Logger.h"
 #include <stdio.h>
 #include <memory>
-using namespace tlog;
+#include <iostream>
 
 int main() {
-    Logger *logger1 = Logger::getLogger();
-    Logger *logger2 = Logger::getLogger();
+    shiny::Logger *logger = shiny::Logger::getLogger();
     
-    if (logger1 == logger2) {
-        printf("logger1 == logger2\n");
-    } else {
-        printf("logger1 != logger2\n");
-    }
-
-
-    std::unique_ptr<char> pbuffer(new char[1]);
-
-    *pbuffer = 'a';
-    *(pbuffer.get() + 1) = 'b';
+    std::cout << logger->getLogLevel() << std::endl;
     
-    printf("%s\n", pbuffer.get());
+    logger->setLogLevel(shiny::LOG_FATAL);
+    std::cout << logger->getLogLevel() << std::endl;
+
+    logger->config("./logdir", "./mmapdir", "logtest", shiny::LogSync);
+
+
 
     return 0;
 }

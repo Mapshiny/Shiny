@@ -19,6 +19,9 @@ void LoggerMmap::mmap(size_t size, int prot, int flags, int fd, off_t offset) {
 }
 
 void LoggerMmap::mmap(const char *file, size_t length) {
+    if (_is_mapped) munmap();
+    if (file == nullptr) return;
+
     int fd = open(file, O_RDWR | O_CREAT | O_EXCL, 0644);
     if (fd == -1) {
         if (errno == EEXIST) {
@@ -49,6 +52,7 @@ void LoggerMmap::mmap(const char *file, size_t length) {
         _size = 0;
     } else {
         _size = length;
+        _is_mapped = true;
     }
     
 }
@@ -59,6 +63,7 @@ void LoggerMmap::munmap() {
     if (ret == 0) {
         _ptr = nullptr;
         _size = 0;
+        _is_mapped = false;
     }
 }
 
@@ -87,7 +92,4 @@ void* LoggerMmap::getPointer() const {
 }
 size_t LoggerMmap::getSize() const {
     return _size;
-}
-void LoggerMmap::setOwns(bool owns) {
-    _is_owns = owns;
 }

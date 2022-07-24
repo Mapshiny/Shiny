@@ -1,7 +1,7 @@
 <div align="center">
 
 
-## Shiny：基于mmap的高性能、高可用日志收集库
+## Shiny：基于mmap的Linux高性能、高可用日志模块
 
 ![](https://img.shields.io/badge/release-v1.0-blue.svg)
 ![](https://img.shields.io/badge/build-passing-green.svg)
@@ -15,8 +15,8 @@
 ## ✨ 特征
 
 - 基于mmap的内存映射IO, 进程虚拟地址空间与内核空间映射至同一块物理页，同时建立与磁盘文件的一一映射关系，实现日志高性能读写
-- 基于zlib的日志压缩
-- 面向现代的C++11开发环境, 充分利用C++11新特性，包括thread库、智能指针、mutex、条件变量等
+- 基于zlib的日志压缩，封装了zlib压缩的基本使用方法
+- 面向现代的C++11开发风格, 充分利用C++11新特性，包括泛型编程、thread库、智能指针、mutex、条件变量等
 - 可拓展的日志加密、解密功能
 
 ## 💎 依赖
@@ -49,6 +49,7 @@ $ make
 待续...
 
 
+
 ## 📚 文档
 
 * mmap
@@ -61,12 +62,12 @@ $ make
 
 待续...
 
-## 参考资料
+## 📀 参考资料
 
 1. [微信终端跨平台组件 mars 系列(一) - 高性能日志模块xlog](https://mp.weixin.qq.com/s/cnhuEodJGIbdodh0IxNeXQ)
 2. [微信终端跨平台组件 mars 系列(二) - 信令传输超时设计](https://mp.weixin.qq.com/s/cnhuEodJGIbdodh0IxNeXQ)
 3. [微信终端跨平台组件 mars 系列 - 我们如约而至](https://mp.weixin.qq.com/s/JVsVrKwJlOwoB3Rz0e17wQ)
 
-## 致谢
+## 🧧 致谢
 
 感谢 Visual Studio Code, Copilot

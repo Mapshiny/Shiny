@@ -9,6 +9,8 @@ include_directories (./include)
 set (main ./main.cpp)
 aux_source_directory(./src SOURCES)
 
+# gdb debug
+set(CMAKE_BUILD_TYPE "DEBUG")
 
 
 add_executable (LOGGER ${main} ${SOURCES})

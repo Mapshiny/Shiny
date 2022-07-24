@@ -11,7 +11,7 @@
 
 class LoggerMmap {
 public:
-    LoggerMmap() : _is_owns(false), _ptr(nullptr), _size(0) {};
+    LoggerMmap() : _is_mapped(false), _ptr(nullptr), _size(0) {};
     ~LoggerMmap();
     
     void mmap(size_t size, int prot, int flags, int fd, off_t offset = 0);
@@ -27,11 +27,11 @@ public:
 
     void* getPointer() const;
     size_t getSize() const;
-    void setOwns(bool owns);
+    // void setIsMmap(bool owns);
 
 
 protected:
-    bool _is_owns;
+    bool _is_mapped;
     void *_ptr;
     size_t _size;
 };

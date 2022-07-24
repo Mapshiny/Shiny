@@ -10,6 +10,8 @@
 #include <memory>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <string>
 
 #include "Logger.h"
 #include "LoggerMmap.h"
@@ -19,13 +21,16 @@ namespace shiny {
 
     class LoggerImpl : public Logger {
         public:
-            LoggerImpl() : _isOpened(false), _logLevel(LOG_DEBUG), _logMode(LogAsync), _logMmap(), _logBufferPtr(nullptr), _logBuffer(nullptr) {};
+            LoggerImpl() : _isConfigured(false), _consoleOutput(true), _logLevel(LOG_DEBUG), _logMode(LogAsync), _logMmap(), _logMemBufer(nullptr), _logBuffer(nullptr) {};
             virtual ~LoggerImpl();
 
-            virtual void logOpen(const char *logDir, const char* mmapDir, const char *logName, LogMode mode) override;
-            virtual void log(LoggerInfo *info, const char *msg) override; 
-            virtual void setLogMode(LogMode mode) override;
+            virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) override;
+            virtual void log(const std::string& data, const char *msg)  override; 
 
+            virtual void flush() override;
+            virtual void close() override;
+
+            virtual void setLogMode(LogMode mode) override;
             virtual void setLogLevel(LogLevel level) override;
             virtual void setLogLevel(const char *level) override;
             virtual void setLogLevel(int level) override;
@@ -34,35 +39,40 @@ namespace shiny {
             virtual void logPrint(LoggerInfo *info, const char *msg) override;
             virtual void logPrintf(LoggerInfo *info, const char *fmt, ...) override;
 
+            virtual void setConsoleOutput(bool enable) override;
+
         public:
             static const unsigned int LOG_MEM_MAP_SIZE = 1024 * 150;
             static const unsigned int LOG_FILE_MAX_SIZE = 1024 * 1024 * 10;
             static const char* LOG_FILE_SUFFIX;
         private:
             bool memoryMap();
-
+            bool openLogFile();
+            void closeLogFile();
+            bool write2file(const std::string& data, size_t size, FILE* file);
         private:
             std::string _logDir;
             std::string _mmapDir;
             std::string _logname;
 
-            bool _isOpened;
+            FILE *_logFile;
+            time_t _openLogFileTime;
+
+            bool _isConfigured;
+            bool _consoleOutput;
 
             LogLevel _logLevel;
             LogMode _logMode;
 
             LoggerMmap _logMmap;
             
-            char *_logBufferPtr;
+            char *_logMemBufer;
             LoggerBuffer *_logBuffer;
 
             std::condition_variable _logcondition;
-            std::mutex _logmutex;
+            std::mutex _logFilemutex;
     };
 }
-
-
-
 
 
 
