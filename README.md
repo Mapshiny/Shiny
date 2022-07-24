@@ -52,10 +52,10 @@ $ make
 ## 📚 文档
 
 * mmap
-  * [什么是mmap?](./doc/mmap.md)
+  * [什么是mmap?](./docs/mmap.md)
 
 * Shiny基本使用
-  * [Shiny的简单使用](./doc/shiny.md)
+  * [Shiny的简单使用](./docs/shiny.md)
   
 * example
 
