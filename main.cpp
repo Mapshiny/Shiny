@@ -13,7 +13,7 @@ int main() {
 
     logger->config("./logdir", "./mmapdir", "logtest", shiny::LogSync);
 
-
+    std::cout << sizeof(bool) << std::endl;
 
     return 0;
 }

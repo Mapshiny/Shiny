@@ -12,10 +12,6 @@ namespace shiny{
         return &logger;
     }
     
-    LoggerImpl::~LoggerImpl() {
-    }
-
-
     void LoggerImpl::config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) {
         if (_isConfigured || logDir == "" || logFileName == "") {
             return;
@@ -32,11 +28,11 @@ namespace shiny{
         // memory map
         bool res = memoryMap();
         if (res) {
-            _logBuffer = new LoggerBuffer(_logMmap.getPointer(), LOG_MEM_MAP_SIZE);
+            _logController = new LogController(LOG_MEM_MAP_SIZE);
         } else {    // memory map failed, use memory buffer
             mode = LogSync;
             _logMemBufer = new char[LOG_MEM_MAP_SIZE];
-            _logBuffer    = new LoggerBuffer(_logMemBufer, LOG_MEM_MAP_SIZE);
+            _logController = new LogController(LOG_MEM_MAP_SIZE);
         }
         setLogMode(mode);
 
@@ -45,10 +41,8 @@ namespace shiny{
     }
 
 
-    void LoggerImpl::log(const std::string& data, const char *msg) {
-        if (data == "" || msg == nullptr) {
-            return;
-        }
+    void LoggerImpl::log(const std::string& data) {
+        if (data == "" || !_isConfigured)   return;
 
         if (openLogFile()) {
             write2file(data, data.size(), _logFile);
@@ -117,7 +111,10 @@ namespace shiny{
         if (_logMode == LogAsync) {
             //TODO: async log
         } else {
-            
+            AutoBuffer buffer;
+            if (_logController->write("test", 4, buffer)) {
+                // log2file(buffer.data(), buffer.size(), _logFile);
+            }
         }
 
     }
@@ -207,14 +204,19 @@ namespace shiny{
             char err_msg[256] = {0};
             snprintf(err_msg, sizeof(err_msg), "write file failed, errno: %d", err);
 
-
-
             return false;
         }
         return true;
     }
 
+    void LoggerImpl::log2file(const std::string& data, size_t size) {
+        if (data == "" || size == 0) return;
 
+        if (openLogFile()) {
+            write2file(data, size, _logFile);
+        }
+    }
+          
 }
 
 #endif
