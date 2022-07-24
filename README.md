@@ -57,7 +57,7 @@ $ make
 
 待续...
 
-<span id="docs"></span>
+<div id="docs" hidden="true">docs</div>
 ## 📚 文档
 
 * mmap
