@@ -28,6 +28,7 @@ namespace shiny{
         // memory map
         bool res = memoryMap();
         if (res) {
+            printf("memory map success\n");
             _logController = new LogController(LOG_MEM_MAP_SIZE);
         } else {    // memory map failed, use memory buffer
             mode = LogSync;
@@ -35,6 +36,11 @@ namespace shiny{
             _logController = new LogController(LOG_MEM_MAP_SIZE);
         }
         setLogMode(mode);
+
+        AutoBuffer buffer;
+
+        LogController->flush(buffer);
+
 
         _isConfigured = true;
 
@@ -45,7 +51,7 @@ namespace shiny{
         if (data == "" || !_isConfigured)   return;
 
         if (openLogFile()) {
-            write2file(data, data.size(), _logFile);
+            write2file(data.c_str(), data.size(), _logFile);
 
             bool tooMany = ftell(_logFile) > LOG_FILE_MAX_SIZE;
             if (_logMode == LogAsync && tooMany) {
@@ -108,14 +114,26 @@ namespace shiny{
     void LoggerImpl::logPrint(LoggerInfo *info, const char *msg) {
         if (info == nullptr && !_isConfigured) return;
         
+        if (_consoleOutput) {
+            printf("%s\n", msg);
+        }
+
+        char* p = (char*)_logMmap.getPointer();
+        char test[] = "test";
+        memcpy(p, test, 4);
+
+        ::munmap(p, 4);
+
+        /*
         if (_logMode == LogAsync) {
             //TODO: async log
         } else {
             AutoBuffer buffer;
             if (_logController->write("test", 4, buffer)) {
-                // log2file(buffer.data(), buffer.size(), _logFile);
+                log2file((char *)buffer.ptr(), buffer.size());
             }
         }
+        */
 
     }
     void LoggerImpl::logPrintf(LoggerInfo *info, const char *fmt, ...) {
@@ -130,7 +148,7 @@ namespace shiny{
     
     bool LoggerImpl::memoryMap() {
         char map_file[256] = {0};
-        snprintf(map_file, sizeof(map_file), "%s/%s.map", 
+        snprintf(map_file, sizeof(map_file), "%s/%s.text", 
                 _mmapDir.empty() ? _logDir.c_str() : _mmapDir.c_str(), _logname.c_str());
 
         _logMmap.mmap(map_file, LOG_MEM_MAP_SIZE);
@@ -187,15 +205,15 @@ namespace shiny{
         }
     }
 
-    bool LoggerImpl::write2file(const std::string& data, size_t size, FILE* file) {
-        if (file == nullptr) {
+    bool LoggerImpl::write2file(const char* data, size_t size, FILE* file) {
+        if (file == nullptr || data == nullptr) {
             return false;
         }
         long offset = ftell(file);
 
         if (offset < 0)     return false;
 
-        if (fwrite(data.c_str(), size, 1, file) != 1) {
+        if (fwrite(data, size, 1, file) != 1) {
             int err = ferror(file);
 
             ftruncate(fileno(file), offset);
@@ -209,8 +227,8 @@ namespace shiny{
         return true;
     }
 
-    void LoggerImpl::log2file(const std::string& data, size_t size) {
-        if (data == "" || size == 0) return;
+    void LoggerImpl::log2file(const char* data, size_t size) {
+        if (data == nullptr || size == 0) return;
 
         if (openLogFile()) {
             write2file(data, size, _logFile);

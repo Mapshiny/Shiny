@@ -19,8 +19,8 @@ void LoggerMmap::mmap(size_t size, int prot, int flags, int fd, off_t offset) {
 }
 
 void LoggerMmap::mmap(const char *file, size_t length) {
-    if (_is_mapped) munmap();
     if (file == nullptr) return;
+    if (_is_mapped) munmap();
 
     int fd = open(file, O_RDWR | O_CREAT | O_EXCL, 0644);
     if (fd == -1) {
@@ -39,7 +39,7 @@ void LoggerMmap::mmap(const char *file, size_t length) {
     }
 
     lseek(fd, length - 1, SEEK_SET);
-    write(fd, "\0", 1);
+    write(fd, " ", 1);
 
     _ptr = ::mmap(nullptr, length, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
     

@@ -53,17 +53,6 @@ void AutoBuffer::write(const off_t& pos, const void *data, size_t size) {
     memcpy(ptr() + pos, data, size);
 }
 
-void* AutoBuffer::ptr(off_t offset) const { return _buffer + offset; }
-
-off_t AutoBuffer::pos() const { return _pos; }
-
-size_t AutoBuffer::size() const { return _size; }
-
-size_t AutoBuffer::capacity() const { return _capacity; }
-
-
-
-
 }
 
 #endif

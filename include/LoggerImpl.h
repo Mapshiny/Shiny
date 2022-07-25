@@ -57,8 +57,8 @@ private:
     bool memoryMap();
     bool openLogFile();
     void closeLogFile();
-    bool write2file(const std::string& data, size_t size, FILE* file);
-    void log2file(const std::string& data, size_t size);
+    bool write2file(const char* data, size_t size, FILE* file);
+    void log2file(const char* data, size_t size);
 private:
     std::string _logDir;
     std::string _mmapDir;

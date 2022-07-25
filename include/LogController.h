@@ -9,6 +9,7 @@
 #include <string>
 
 #include "AutoBuffer.h"
+#include "PtrBuffer.h"
 
 namespace shiny {
 
@@ -18,8 +19,10 @@ public:
     ~LogController();
     
 public:
+    void flush(AutoBuffer& buff);
     bool write(const std::string& data, size_t inputSize);
     bool write(const std::string& data, size_t inputSize, AutoBuffer &output);
+
     void setCompress(bool enabled);
 
 private:
@@ -29,6 +32,8 @@ private:
 private:
     std::mutex _logControllerMutex;
 
+    PtrBuffer _ptrBuffer;
+    
     bool _compress;
 
 };

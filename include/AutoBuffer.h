@@ -34,11 +34,11 @@ public:
     void write(const void *data, size_t size);
     void write(const off_t& pos, const void *data, size_t size);
 public:
-    void* ptr(off_t offset = 0) const;
-    off_t pos() const;
-    size_t size() const;
-    size_t capacity() const;
-
+    void* ptr(off_t offset = 0) const { return _buffer + offset; }
+    off_t pos() const { return _pos; }
+    size_t size() const { return _size; }
+    size_t capacity() const { return _capacity; }
+    
 private:
     unsigned char *_buffer;
 
