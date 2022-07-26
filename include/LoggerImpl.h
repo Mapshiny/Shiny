@@ -13,7 +13,7 @@
 #include <sys/time.h>
 #include <string>
 
-#include "Logger.h"
+#include "./Interface/Logger.h"
 #include "LoggerMmap.h"
 #include "LogController.h"
 
@@ -57,8 +57,11 @@ private:
     bool memoryMap();
     bool openLogFile();
     void closeLogFile();
-    bool write2file(const char* data, size_t size, FILE* file);
-    void log2file(const char* data, size_t size);
+    
+    void log2file(const void* data, size_t size);
+
+    void writeTips2File(const char* tips);
+    bool write2File(const char* data, size_t size, FILE* file);
 private:
     std::string _logDir;
     std::string _mmapDir;

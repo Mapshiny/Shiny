@@ -5,7 +5,7 @@
 
 namespace shiny{
 
-    const char* LoggerImpl::LOG_FILE_SUFFIX = ".shiny";
+    const char* LoggerImpl::LOG_FILE_SUFFIX = "shiny";
 
     Logger* Logger::getLogger() {
         static LoggerImpl logger;
@@ -29,18 +29,22 @@ namespace shiny{
         bool res = memoryMap();
         if (res) {
             printf("memory map success\n");
-            _logController = new LogController(LOG_MEM_MAP_SIZE);
+            _logController = new LogController(_logMmap.getPointer(), LOG_MEM_MAP_SIZE);
         } else {    // memory map failed, use memory buffer
             mode = LogSync;
             _logMemBufer = new char[LOG_MEM_MAP_SIZE];
-            _logController = new LogController(LOG_MEM_MAP_SIZE);
+            _logController = new LogController(_logMemBufer, LOG_MEM_MAP_SIZE);
         }
         setLogMode(mode);
 
         AutoBuffer buffer;
 
-        LogController->flush(buffer);
-
+        _logController->flush(buffer);
+        if (buffer.ptr()) {
+            writeTips2File("~~~~~cache begin~~~~~");
+            log2file(buffer.ptr(), buffer.size());
+            writeTips2File("~~~~~cache end~~~~~");
+        }
 
         _isConfigured = true;
 
@@ -51,7 +55,7 @@ namespace shiny{
         if (data == "" || !_isConfigured)   return;
 
         if (openLogFile()) {
-            write2file(data.c_str(), data.size(), _logFile);
+            write2File(data.c_str(), data.size(), _logFile);
 
             bool tooMany = ftell(_logFile) > LOG_FILE_MAX_SIZE;
             if (_logMode == LogAsync && tooMany) {
@@ -205,7 +209,27 @@ namespace shiny{
         }
     }
 
-    bool LoggerImpl::write2file(const char* data, size_t size, FILE* file) {
+    void LoggerImpl::log2file(const void* data, size_t size) {
+        if (data == nullptr || size == 0) return;
+
+        if (openLogFile()) {
+            write2File((char *)data, size, _logFile);
+        }
+    }
+
+    void LoggerImpl::writeTips2File(const char* tips) {
+        if (tips == nullptr) return;
+
+        AutoBuffer buffer;
+        _logController->write(tips, strlen(tips), buffer);
+
+        if (buffer.ptr()) {
+            log2file(buffer.ptr(), buffer.size());
+        }
+    }
+    
+
+    bool LoggerImpl::write2File(const char* data, size_t size, FILE* file) {
         if (file == nullptr || data == nullptr) {
             return false;
         }
@@ -227,13 +251,6 @@ namespace shiny{
         return true;
     }
 
-    void LoggerImpl::log2file(const char* data, size_t size) {
-        if (data == nullptr || size == 0) return;
-
-        if (openLogFile()) {
-            write2file(data, size, _logFile);
-        }
-    }
           
 }
 

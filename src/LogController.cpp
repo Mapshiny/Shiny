@@ -4,8 +4,6 @@
 
 namespace shiny {
 
-LogController::LogController(bool compress) : _compress(compress) {
-}
 
 LogController::~LogController() {
 }
@@ -24,12 +22,11 @@ bool LogController::write(const std::string& data, size_t inputSize) {
     return false;
 }
 
-bool LogController::write(const std::string& data, size_t inputSize, AutoBuffer &output) {
+bool LogController::write(const std::string& data, size_t inputSize, AutoBuffer &buffer) {
     if (inputSize < 1 || data == "")    return false;
 
-    output.allocWrite(inputSize);
-
-    output.write(data.c_str(), inputSize);
+    buffer.alloc(inputSize);
+    buffer.write(data.c_str(), inputSize);
     
 }
 
@@ -39,7 +36,8 @@ void LogController::setCompress(bool enabled) {
 }
 
 void LogController::clear() {
-    memset(_ptrBuffer.ptr(), 0, _ptrBuffer.size());
+    memset(_ptrBuffer.ptr(), 0, _ptrBuffer.capacity());
+    _ptrBuffer.length(0, 0);   
 }
 
 

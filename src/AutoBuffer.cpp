@@ -7,7 +7,7 @@ namespace shiny {
 
 AutoBuffer::~AutoBuffer() {}
 
-void AutoBuffer::allocWrite(size_t _readyToWrite, bool _changeSize) {
+void AutoBuffer::alloc(size_t _readyToWrite, bool _changeSize) {
     size_t len = pos() + _readyToWrite;
     fitBuffer(len);     //TODO: catch exception
     if (_changeSize)
@@ -21,16 +21,16 @@ void AutoBuffer::addCapacity(size_t _addCapacity) {
 void AutoBuffer::fitBuffer(size_t size) throw(std::bad_alloc) {
     if (size > capacity()) {
         size_t mallocSize = ( (size + unit_size - 1) / unit_size ) * unit_size;
-        void* p = realloc(_buffer, mallocSize);
+        void* p = realloc(_pbuffer, mallocSize);
         if (p == nullptr) {
-            free(_buffer);
+            free(_pbuffer);
             //TODO: roll back
             throw std::bad_alloc();
         }
         
-        _buffer = (unsigned char*)p;
+        _pbuffer = (unsigned char*)p;
 
-        memset(_buffer + _capacity, 0, mallocSize - _capacity);
+        memset(_pbuffer + _capacity, 0, mallocSize - _capacity);
         _capacity = mallocSize;
     }
 }
@@ -40,6 +40,7 @@ void AutoBuffer::write(const void *data, size_t size) {
         return;
     
     write(pos(), data, size);
+    seek(size, kSeekCur);
 }
 
 void AutoBuffer::write(const off_t& pos, const void *data, size_t size) {
@@ -50,7 +51,18 @@ void AutoBuffer::write(const off_t& pos, const void *data, size_t size) {
     
     _size = std::max(_size, pos + size);
 
-    memcpy(ptr() + pos, data, size);
+    memcpy((unsigned char*)ptr() + pos, data, size);
+}
+
+
+void AutoBuffer::reset() {
+    if (_pbuffer != nullptr) {
+        free(_pbuffer);
+    }
+    _pos = 0;
+    _size = 0;
+    _capacity = 0;
+    _pbuffer = nullptr;
 }
 
 }
