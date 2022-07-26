@@ -14,7 +14,7 @@
 
 ## 🐣 前言
 
-Shiny 是基于[mmap](./docs/mmap.md)的Linux轻量级日志模块, 目前仅支持Linux环境。它的核心是通过mmap对磁盘文件进行一一映射, 只进行映射而没有任何文件的IO、用户态内核态之间的数据拷贝操作。基于mmap进行文件的读写与内存读写的性能是一样的, 保证了日志模块的的高性能。
+Shiny 是基于[mmap](./docs/mmap.md)的Linux轻量级日志模块, 目前仅支持Linux环境。它的核心是通过mmap对文件进行映射一片固定大小的内存空间, 并且通过该内存空间进行日志的高速缓存, 最终通过write进行日志的写入。mmap对日志进行持久化的高速缓存, 保证了日志的高可靠性, 即不丢失日志。
 
 项目提供了简单的日志接口, 主要包括：获取单例的logger、配置日志文件路径、设置日志等级等。同时, 对多线程打印日志进行了并发控制, 避免多线程打印日志产生的race condition。
 
@@ -25,7 +25,7 @@ Shiny 是基于[mmap](./docs/mmap.md)的Linux轻量级日志模块, 目前仅支
 
 ## ✨ 特征
 
-- 基于mmap的内存映射IO, 进程虚拟地址空间与内核空间映射至同一内存空间，同时该空间建立与磁盘文件的一一映射关系，实现日志高性能读写
+- 基于mmap的高速日志缓冲区, 保证日志的不丢失效果
 - 基于zlib的日志压缩，封装了zlib压缩的基本使用方法
 - 面向现代的C++11开发风格, 充分利用C++11新特性，包括RAII、thread库、条件变量等
 - 可拓展的日志加密、解密功能
@@ -80,7 +80,7 @@ $ make
 
 1. [彻底理解mmap()](https://blog.csdn.net/Holy_666/article/details/86532671)
 2. [微信终端跨平台组件 mars 系列(一) - 高性能日志模块xlog](https://mp.weixin.qq.com/s/cnhuEodJGIbdodh0IxNeXQ)
-3. [微信终端跨平台组件 mars 系列 - 我们如约而至](https://mp.weixin.qq.com/s/JVsVrKwJlOwoB3Rz0e17wQ)
+3. [微信跨平台组件mars-xlog架构分析及迁移思路](https://zhuanlan.zhihu.com/p/25011775)
 
 ## 🧧 致谢
 

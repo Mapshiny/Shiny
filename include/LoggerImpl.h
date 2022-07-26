@@ -25,12 +25,7 @@ public:
                     _logMode(LogAsync), _logMmap(), _logMemBufer(nullptr), _logController(nullptr) {};
     virtual ~LoggerImpl(){};
 
-    virtual void config(
-        const std::string& logDir, 
-        const std::string& cacheDir, 
-        const std::string& logFileName, 
-        LogMode mode
-    ) override;
+    virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) override;
 
     virtual void log(const std::string& data)  override; 
 

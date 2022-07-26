@@ -38,12 +38,12 @@ namespace shiny{
         setLogMode(mode);
 
         AutoBuffer buffer;
-
         _logController->flush(buffer);
+
         if (buffer.ptr()) {
-            writeTips2File("~~~~~cache begin~~~~~");
+            writeTips2File("~~~~~cache begin~~~~~\n");
             log2file(buffer.ptr(), buffer.size());
-            writeTips2File("~~~~~cache end~~~~~");
+            writeTips2File("~~~~~cache end~~~~~\n");
         }
 
         _isConfigured = true;
