@@ -5,13 +5,15 @@
 
 namespace shiny {
 
-AutoBuffer::~AutoBuffer() {}
+AutoBuffer::~AutoBuffer() {
+    reset();
+}
 
 void AutoBuffer::alloc(size_t _readyToWrite, bool _changeSize) {
     size_t len = pos() + _readyToWrite;
     fitBuffer(len);     //TODO: catch exception
     if (_changeSize)
-        _size = std::max(_size, len);
+        _size = max(_size, len);
 }
 
 void AutoBuffer::addCapacity(size_t _addCapacity) {
@@ -39,21 +41,29 @@ void AutoBuffer::write(const void *data, size_t size) {
     if (size < 1 || data == nullptr)
         return;
     
-    write(pos(), data, size);
+    write(data, size, pos());
     seek(size, kSeekCur);
 }
 
-void AutoBuffer::write(const off_t& pos, const void *data, size_t size) {
+void AutoBuffer::write(const void *data, size_t size, const off_t& pos) {
     if (size < 1 || data == nullptr)
         return;
     
     fitBuffer(size + pos);
     
-    _size = std::max(_size, pos + size);
+    _size = max(_size, pos + size);
 
     memcpy((unsigned char*)ptr() + pos, data, size);
 }
 
+
+void AutoBuffer::attach(void* ptr, size_t size, size_t capacity) {
+    reset();
+
+    _pbuffer = (unsigned char*)ptr;
+    _size = size;
+    _capacity = capacity;
+}
 
 void AutoBuffer::reset() {
     if (_pbuffer != nullptr) {

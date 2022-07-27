@@ -6,6 +6,13 @@
 
 namespace shiny {
 
+#ifndef max
+#define max(a, b) (((a) > (b)) ? (a) : (b))
+#endif
+#ifndef min
+#define min(a, b) (((a) < (b)) ? (a) : (b))
+#endif
+
 class PtrController {
 public:
     enum Seek {
@@ -23,6 +30,9 @@ protected:
     PtrController& operator=(const PtrController& other) = delete;
 
     virtual ~PtrController() { if (_pbuffer) delete(_pbuffer); }
+
+public:
+    virtual void write(const void* data, size_t len) = 0;
 
 public:
     void seek(off_t nOffset, Seek eOrigin) {
@@ -44,11 +54,13 @@ public:
         if ((unsigned int)_pos > _capacity) _pos = _capacity;
     }
 
-    void length(off_t nPos, size_t nSize) {
+    void adjust(off_t nPos, size_t nSize) {
         _size = _capacity < nSize ? _capacity : nSize;
         seek(nPos, kSeekStart);
     }
     
+    virtual void attach(void *ptr, size_t len, size_t capacity) = 0;
+
 public:
     void *ptr() const { return _pbuffer; }
     off_t pos() const { return _pos; }

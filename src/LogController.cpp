@@ -14,7 +14,7 @@ void LogController::flush(AutoBuffer& buff) {
     if (_ptrBuffer.size() > 0) {
         buff.write(_ptrBuffer.ptr(), _ptrBuffer.size());
     }
-
+    
     clear();
 }
 
@@ -37,7 +37,7 @@ void LogController::setCompress(bool enabled) {
 
 void LogController::clear() {
     memset(_ptrBuffer.ptr(), 0, _ptrBuffer.capacity());
-    _ptrBuffer.length(0, 0);   
+    _ptrBuffer.adjust(0, 0);   
 }
 
 

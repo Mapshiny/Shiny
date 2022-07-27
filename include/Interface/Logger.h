@@ -23,10 +23,10 @@ namespace shiny {
         struct timeval timev;
         int64_t thread_id;
         int64_t process_id;
-        const char *name;
-        const char *file;
-        int line;
-        LoggerInfo_t(LogLevel level, const char *name, const char *file, int line) : level(level), timev(), thread_id(0), process_id(0), name(name), file(file), line(line) {};
+        const char *tag = nullptr;
+        const char *file_name = nullptr;
+        // int line;
+        LoggerInfo_t(LogLevel level, const char *file_name) : level(level), timev(), thread_id(0), process_id(0){};
     } LoggerInfo;
 
     enum LogMode {

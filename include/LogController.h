@@ -16,7 +16,7 @@ namespace shiny {
 class LogController {
 public:
     LogController(void *pbuffer, size_t len, bool compress = true) : _compress(compress){
-        _ptrBuffer.attach(pbuffer, len);
+        _ptrBuffer.attach(pbuffer, 0, len);
     }
     ~LogController();
     

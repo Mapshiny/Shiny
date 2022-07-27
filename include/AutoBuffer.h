@@ -28,8 +28,10 @@ public:
     void fitBuffer(size_t size) throw(std::bad_alloc);
 
 public:
-    void write(const void *data, size_t size);
-    void write(const off_t& pos, const void *data, size_t size);
+    void write(const void *data, size_t size) override;
+    void write(const void *data, size_t size, const off_t& pos);
+
+    void attach(void* ptr, size_t size, size_t capacity) override;
 
 private:
     void reset() override;

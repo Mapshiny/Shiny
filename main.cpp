@@ -8,7 +8,7 @@ int main() {
     
     logger->config("./logdir", "./mmapdir", "logtest", shiny::LogSync);
 
-    logger->logPrint(nullptr, "hello world");
+    // logger->logPrint(nullptr, "hello world");
 
     return 0;
 }

@@ -43,7 +43,7 @@ namespace shiny{
         if (buffer.ptr()) {
             writeTips2File("~~~~~cache begin~~~~~\n");
             log2file(buffer.ptr(), buffer.size());
-            writeTips2File("~~~~~cache end~~~~~\n");
+            writeTips2File("~~~~~cache end~~~~~~~\n");
         }
 
         _isConfigured = true;
@@ -122,11 +122,10 @@ namespace shiny{
             printf("%s\n", msg);
         }
 
-        char* p = (char*)_logMmap.getPointer();
-        char test[] = "test";
-        memcpy(p, test, 4);
+        char temp[16 * 1024] = {0};
+        PtrBuffer buffer(temp, sizeof(temp));
+        
 
-        ::munmap(p, 4);
 
         /*
         if (_logMode == LogAsync) {
@@ -149,7 +148,42 @@ namespace shiny{
         _consoleOutput = enable;
     }
 
+
+    void LoggerImpl::logFormat(const LoggerInfo &info, const char *logbody, PtrBuffer &buff) {
+        static const char *levelStr[] = {"DEBUG", "INFO", "WARNING", "ERROR", "FATAL"};
+
+        char temp_time[64] = {0};
+
+        if (0 != info.timev.tv_sec) {
+            time_t sec = info.timev.tv_sec;
+            tm tm = *localtime(&sec);
+
+            snprintf(temp_time, sizeof(temp_time), "%04d-%02d-%02d %02d:%02d:%02d.%03d",
+                     tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday,
+                     tm.tm_hour, tm.tm_min, tm.tm_sec,
+                     info.timev.tv_usec / 1000);
+            
+            int ret = snprintf((char *) buff.ptr(), 1025, "[%s][%s][%s][%lld%s]",
+                               temp_time, levelStr[info.level], 
+                               info.tag ? info.tag : "", 
+                               info.thread_id, info.process_id == info.thread_id ? "*" : "");
+            
+            buff.adjust(buff.pos() + ret, buff.size() + ret);
+            
+            if (logbody != nullptr) {
+                size_t bodylen = ( buff.capacity() - buff.size() ) > 130 ? (buff.capacity() - buff.size() - 130) : 0;
+
+                bodylen = bodylen > 0XFFFFU ? 0XFFFFU : bodylen;
+                bodylen = strnlen(logbody, bodylen);
+                bodylen = bodylen > 0XFFFFU ? 0XFFFFU : bodylen;
+                
+                buff.write(logbody, bodylen);
+
+            }
+        }
+    }
     
+
     bool LoggerImpl::memoryMap() {
         char map_file[256] = {0};
         snprintf(map_file, sizeof(map_file), "%s/%s.text", 

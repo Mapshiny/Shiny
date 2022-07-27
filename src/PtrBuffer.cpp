@@ -12,9 +12,23 @@ void PtrBuffer::reset() {
     _pbuffer = nullptr;
 }
 
+void PtrBuffer::write(const void *data, size_t size) {
+    if (size < 1 || data == nullptr)
+        return;
+    
+    write(data, size, pos());
+    seek(size, kSeekCur);
+}
 
-void PtrBuffer::attach(void* ptr, size_t size) {
-    attach(ptr, size, size);
+void PtrBuffer::write(const void *data, size_t size, const off_t& pos) {
+    if (size < 1 || data == nullptr)
+        return;
+    
+    size_t copylen = min(size, capacity() - pos);
+    
+    _size = max(_size, pos + size);
+    
+    memcpy((unsigned char*)ptr() + pos, data, size);
 }
 
 
@@ -27,10 +41,10 @@ void PtrBuffer::attach(void* ptr, size_t size, size_t capacity) {
 }
 
 
-void PtrBuffer::length(off_t nPos, size_t nSize) {
-    _size = _capacity < nSize ? _capacity : nSize;
-    seek(nPos, kSeekStart);
-}
+// void PtrBuffer::adjust(off_t nPos, size_t nSize) {
+//     _size = _capacity < nSize ? _capacity : nSize;
+//     seek(nPos, kSeekStart);
+// }
 
 
 

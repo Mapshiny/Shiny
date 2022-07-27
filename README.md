@@ -20,12 +20,12 @@ Shiny 是基于[mmap](./docs/mmap.md)的Linux轻量级日志模块, 目前仅支
 
 站在巨人的肩膀上。Shiny项目参考[微信官方的跨平台跨业务终端基础组件mars](https://github.com/Tencent/mars)中的xlog日志模块, 对xlog进行了裁剪和重构, 并且完善了项目文档。
 
-更多关于Shiny和mmap的相关知识, 参考[Shiny的文档](#docss)
+更多关于mmap、xlog、Shiny的相关知识, 参考[Shiny的文档](#docss)
 
 
 ## ✨ 特征
 
-- 基于mmap的高速日志缓冲区, 保证日志的不丢失效果
+- 基于mmap的高速日志缓冲区, 保证进程crash时不丢失日志
 - 基于zlib的日志压缩，封装了zlib压缩的基本使用方法
 - 面向现代的C++11开发风格, 充分利用C++11新特性，包括RAII、thread库、条件变量等
 - 可拓展的日志加密、解密功能

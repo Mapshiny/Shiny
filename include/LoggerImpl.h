@@ -44,6 +44,10 @@ public:
     virtual void setConsoleOutput(bool enable) override;
 
 public:
+    void logFormat(const LoggerInfo &_info, const char *_logbody, PtrBuffer &_buff);
+    
+
+public:
     static const unsigned int LOG_MEM_MAP_SIZE = 1024 * 150;
     static const unsigned int LOG_FILE_MAX_SIZE = 1024 * 1024 * 10;
     static const char* LOG_FILE_SUFFIX;
