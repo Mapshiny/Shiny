@@ -43,8 +43,8 @@
 - cmake >= 3.20.2
 - gcc、gcc-c++
 - make
-- automake
 - kernel-devel
+- zlib
 
 ## ⛏️ 构建
 
@@ -53,7 +53,15 @@ $ sudo yum install make automake gcc gcc-c++ kernel-devel
 
 $ git clone git@github.com:Mapshiny/Shiny.git
 
-$ cd Shiny
+$ cd Shiny/lib
+
+$ tar -zxvf zlib-1.2.12.tar.gz && cd zlib-1.2.12/   // 解压zib
+
+$ ./configure   // 配置zlib
+
+$ sudo make install   // 编译zlib
+
+$ cd ../..
 
 $ mkdir build bin
 
