@@ -14,15 +14,19 @@
 
 ## 🐣 前言
 
-`Shiny` 是基于[mmap](https://blog.csdn.net/bie_niu1992/article/details/89967045)的`Linux`轻量级日志模块, 目前仅支持`Linux`环境。它的核心是通过`mmap`对文件进行映射一片固定大小的内存空间, 并且通过该内存空间进行日志的高速缓存, 最终通过`write`进行日志的写入。`mmap`对日志进行持久化的高速缓存, 保证了日志的高可靠性, 即不丢失日志。
+`Shiny` 是基于[mmap](https://blog.csdn.net/bie_niu1992/article/details/89967045)的`Linux`轻量级日志模块。它的核心是通过`mmap`对文件进行映射一片固定大小的内存空间, 并且通过该内存空间进行日志的高速缓存, 最终通过`write`进行日志的写入。`mmap`对日志进行持久化的高速缓存, 保证了日志的高可靠性, 即不丢失日志。
 
-项目提供了简单的日志接口, 主要包括：获取单例的`logger`、配置日志文件路径、设置日志等级等。同时, 对多线程打印日志进行了并发控制, 避免多线程打印日志产生的race condition。
+项目提供了简单的日志接口, 主要包括：获取单例的`logger`、配置日志文件路径、设置日志等级等。
 
 站在巨人的肩膀上。`Shiny`项目参考[微信官方的跨平台跨业务终端基础组件mars](https://github.com/Tencent/mars)中的`xlog`日志模块, 对`xlog`进行了裁剪和重构, 并且完善了项目文档。
 
 更多关于`mmap`、`xlog`、`Shiny`的相关知识, 参考[Shiny的文档](#docss)
 
 ## 🚀 架构
+
+根据微信官方对xlog的介绍和源码阅读, xlog并未对日志文件进行映射, 通过内核对dirty page的持久化策略进行日志的IO, 而是基于mmap映射了一块高速的、持久化的高速缓存, 最终通过后台线程进行该高速缓存的读取，并且通过`write`进行日志的写入。
+
+**项目的可改进策略**：通过mmap直接映射固定大小的日志文件, 并对该mmap隐射的内存进行读写的并发控制
 
 ![流程图](./docs/assets/flowChart.png)
 
@@ -63,7 +67,7 @@ $ make
 ```
 $ cd sample
 
-$ make build bin
+$ mkdir build bin
 
 $ cd build && cmake ..
 
