@@ -57,7 +57,18 @@ $ make
 
 ## 🥇 性能测试
 
-待续...
+```
+$ cd sample
+
+$ make build bin
+
+$ cd build && cmake ..
+
+$ make
+
+$ ../bin/benchmark
+```
+
 
 
 ## 📚 <span id="docss">文档</span>
