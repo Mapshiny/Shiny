@@ -18,16 +18,17 @@ void LogController::flush(AutoBuffer& buff) {
     clear();
 }
 
-bool LogController::write(const std::string& data, size_t inputSize) {
+bool LogController::write(const char* data, size_t inputSize) {
     return false;
 }
 
-bool LogController::write(const std::string& data, size_t inputSize, AutoBuffer &buffer) {
+bool LogController::write(const char* data, size_t inputSize, AutoBuffer &buffer) {
     if (inputSize < 1 || data == "")    return false;
 
     buffer.alloc(inputSize);
-    buffer.write(data.c_str(), inputSize);
+    buffer.write(data, inputSize);
     
+    return true;
 }
 
 

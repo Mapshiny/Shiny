@@ -12,6 +12,8 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <string>
+#include <functional>
+#include <assert.h>
 
 #include "./Interface/Logger.h"
 #include "LoggerMmap.h"
@@ -22,7 +24,7 @@ namespace shiny {
 class LoggerImpl : public Logger {
 public:
     LoggerImpl() : _isConfigured(false), _consoleOutput(false), _logLevel(LOG_DEBUG), 
-                    _logMode(LogAsync), _logMmap(), _logMemBufer(nullptr), _logController(nullptr) {};
+                    _logMode(LogSync), _logMmap(), _logMemBufer(nullptr), _logController(nullptr) {};
     virtual ~LoggerImpl(){};
 
     virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) override;
@@ -38,19 +40,20 @@ public:
     virtual void setLogLevel(int level) override;
     virtual LogLevel getLogLevel() override;
 
-    virtual void logPrint(LoggerInfo *info, const char *msg) override;
-    virtual void logPrintf(LoggerInfo *info, const char *fmt, ...) override;
+    virtual void logPrint(LoggerInfo &info, const char *msg) override;
+    virtual void logPrintf(LoggerInfo &info, const char *fmt, ...) override;
 
     virtual void setConsoleOutput(bool enable) override;
-
-public:
-    void logFormat(const LoggerInfo &_info, const char *_logbody, PtrBuffer &_buff);
-    
 
 public:
     static const unsigned int LOG_MEM_MAP_SIZE = 1024 * 150;
     static const unsigned int LOG_FILE_MAX_SIZE = 1024 * 1024 * 10;
     static const char* LOG_FILE_SUFFIX;
+
+
+protected:
+    void asyncRun();
+
 
 private:
     bool memoryMap();
@@ -61,6 +64,11 @@ private:
 
     void writeTips2File(const char* tips);
     bool write2File(const char* data, size_t size, FILE* file);
+
+    void logFormat(const LoggerInfo &_info, const char *_logbody, PtrBuffer &_buff);
+
+    void makeLogFileName(struct tm& _tm, char *_filePath);
+
 private:
     std::string _logDir;
     std::string _mmapDir;
@@ -80,8 +88,10 @@ private:
     char *_logMemBufer;
     LogController *_logController;
 
-    std::condition_variable _logcondition;
+    std::condition_variable _conditionAsync;
     std::mutex _logFilemutex;
+    std::mutex _mutexAsync;
+    std::thread *_asyncThread;
 };
 
 }

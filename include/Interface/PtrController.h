@@ -22,16 +22,17 @@ public:
     };
 protected:
     explicit PtrController() : _pbuffer(nullptr), _pos(0), _size(0), _capacity(0) {}
-    explicit PtrController(void* ptr, size_t len) : _pbuffer((unsigned char*)ptr), _pos(0), _size(len), _capacity(len) {} 
+    explicit PtrController(void* ptr, size_t len) : _pbuffer((unsigned char*)ptr), _pos(0), _size(0), _capacity(len) {} 
     explicit PtrController(void* ptr, size_t len, size_t capcity) : _pbuffer((unsigned char*)ptr), _pos(0), _size(len), _capacity(capcity) {} 
 
 
     PtrController(const PtrController& other) = delete;
     PtrController& operator=(const PtrController& other) = delete;
 
-    virtual ~PtrController() { if (_pbuffer) delete(_pbuffer); }
+    virtual ~PtrController() {}
 
 public:
+    void writeErr(const char *const _val) { write(_val, (unsigned int) strlen(_val));}
     virtual void write(const void* data, size_t len) = 0;
 
 public:

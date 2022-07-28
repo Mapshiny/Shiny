@@ -22,8 +22,8 @@ public:
     
 public:
     void flush(AutoBuffer& buff);
-    bool write(const std::string& data, size_t inputSize);
-    bool write(const std::string& data, size_t inputSize, AutoBuffer &output);
+    bool write(const char* data, size_t inputSize);
+    bool write(const char* data, size_t inputSize, AutoBuffer &output);
 
     void setCompress(bool enabled);
 

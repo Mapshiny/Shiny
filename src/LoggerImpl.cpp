@@ -69,7 +69,8 @@ namespace shiny{
     }
 
     void LoggerImpl::flush() {
-
+        if (!_isConfigured)   return;
+        _conditionAsync.notify_all();
     }
     void LoggerImpl::close() {
 
@@ -78,6 +79,12 @@ namespace shiny{
 
     void LoggerImpl::setLogMode(LogMode mode) {
         _logMode = mode;
+
+        if (_logMode == LogSync && !_asyncThread) {
+            _asyncThread = new std::thread(std::bind(&LoggerImpl::asyncRun, this));
+            _asyncThread->detach();
+        }
+            
     }
 
     void LoggerImpl::setLogLevel(LogLevel level) {
@@ -115,32 +122,28 @@ namespace shiny{
         return _logLevel;
     }
 
-    void LoggerImpl::logPrint(LoggerInfo *info, const char *msg) {
-        if (info == nullptr && !_isConfigured) return;
+    void LoggerImpl::logPrint(LoggerInfo &info, const char *msg) {
+        if (!_isConfigured) return;
         
-        if (_consoleOutput) {
-            printf("%s\n", msg);
-        }
-
         char temp[16 * 1024] = {0};
         PtrBuffer buffer(temp, sizeof(temp));
         
+        logFormat(info, msg, buffer);
 
+        if (_consoleOutput)     printf("%s\r\n", buffer.ptr());
 
-        /*
         if (_logMode == LogAsync) {
-            //TODO: async log
+            // todo: async log
         } else {
-            AutoBuffer buffer;
-            if (_logController->write("test", 4, buffer)) {
-                log2file((char *)buffer.ptr(), buffer.size());
+            
+            AutoBuffer buff;
+            if (_logController->write((char *)buffer.ptr(), buffer.size(), buff)) {
+                log2file(buff.ptr(), buff.size());
             }
         }
-        */
 
     }
-    void LoggerImpl::logPrintf(LoggerInfo *info, const char *fmt, ...) {
-        if (info == NULL) return;
+    void LoggerImpl::logPrintf(LoggerInfo &info, const char *fmt, ...) {
     
     }
 
@@ -154,7 +157,7 @@ namespace shiny{
 
         char temp_time[64] = {0};
 
-        if (0 != info.timev.tv_sec) {
+        if (0 == info.timev.tv_sec) {
             time_t sec = info.timev.tv_sec;
             tm tm = *localtime(&sec);
 
@@ -163,7 +166,7 @@ namespace shiny{
                      tm.tm_hour, tm.tm_min, tm.tm_sec,
                      info.timev.tv_usec / 1000);
             
-            int ret = snprintf((char *) buff.ptr(), 1025, "[%s][%s][%s][%lld%s]",
+            int ret = snprintf((char *) buff.ptr(), 1024, "[%s][%s][%s][%lld%s]",
                                temp_time, levelStr[info.level], 
                                info.tag ? info.tag : "", 
                                info.thread_id, info.process_id == info.thread_id ? "*" : "");
@@ -178,11 +181,45 @@ namespace shiny{
                 bodylen = bodylen > 0XFFFFU ? 0XFFFFU : bodylen;
                 
                 buff.write(logbody, bodylen);
-
             }
+            else {
+                buff.writeErr("error!! NULL==_logbody");
+            }
+
+            char nextline = '\n';
+            if (*((unsigned char*)buff.ptr() + buff.pos() - 1) != '\n') {
+                buff.write(&nextline, 1);
+            }
+
         }
     }
     
+
+    void LoggerImpl::asyncRun() {
+        // deleteTimeoutFiles();
+
+        while (true) {
+            if (_logController == nullptr)  break;
+
+            AutoBuffer buff;
+            _logController->flush(buff);
+
+            if (buff.ptr()) {
+                log2file(buff.ptr(), buff.size());
+            }
+
+            if (_logFile == nullptr)    break;
+
+            std::unique_lock<std::mutex> lock(_mutexAsync);
+            _conditionAsync.wait_for(lock, std::chrono::seconds(10 * 60));
+        }
+
+        delete _asyncThread;
+        _logMode = LogMode::LogSync;
+        _asyncThread = nullptr;
+
+    }
+
 
     bool LoggerImpl::memoryMap() {
         char map_file[256] = {0};
@@ -235,6 +272,26 @@ namespace shiny{
         return nullptr != _logFile;
     }
     
+    void LoggerImpl::makeLogFileName(struct tm& _tm, char *filePath) {
+
+        char temp[64] = {0};
+        snprintf(temp, 64, "_%d%02d%02d", 1900 + _tm.tm_year, 1 + _tm.tm_mon, _tm.tm_mday);
+
+        std::string log_file_path = _logDir;
+        log_file_path += "/";
+        log_file_path += _logname;
+        log_file_path += temp;
+        log_file_path += ".";
+        log_file_path += LOG_FILE_SUFFIX;
+
+        strncpy(filePath, log_file_path.c_str(), sizeof(filePath));
+        filePath[log_file_path.size()] = '\0';
+
+        printf("log file over size: %s\n", filePath);
+
+    }
+
+
     void LoggerImpl::closeLogFile() {
         std::unique_lock<std::mutex> lock_file(_logFilemutex);
         if (nullptr != _logFile) {
@@ -248,6 +305,17 @@ namespace shiny{
 
         if (openLogFile()) {
             write2File((char *)data, size, _logFile);
+
+            bool file_size_over = ftell(_logFile) > LOG_FILE_MAX_SIZE;
+            if (file_size_over ) {
+                closeLogFile();
+            }
+
+            if (file_size_over) {
+                // todo: rename log file
+                assert(false);
+            }
+
         }
     }
 
@@ -264,7 +332,7 @@ namespace shiny{
     
 
     bool LoggerImpl::write2File(const char* data, size_t size, FILE* file) {
-        if (file == nullptr || data == nullptr) {
+        if (data == nullptr || file == nullptr) {
             return false;
         }
         long offset = ftell(file);

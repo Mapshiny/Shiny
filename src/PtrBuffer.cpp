@@ -26,7 +26,7 @@ void PtrBuffer::write(const void *data, size_t size, const off_t& pos) {
     
     size_t copylen = min(size, capacity() - pos);
     
-    _size = max(_size, pos + size);
+    _size = max(_size, copylen + pos);
     
     memcpy((unsigned char*)ptr() + pos, data, size);
 }

@@ -52,8 +52,8 @@ namespace shiny {
         virtual void setLogLevel(int level) = 0;
         virtual LogLevel getLogLevel() = 0;
 
-        virtual void logPrint(LoggerInfo *info, const char *msg) = 0;
-        virtual void logPrintf(LoggerInfo *info, const char *fmt, ...) = 0;
+        virtual void logPrint(LoggerInfo &info, const char *msg) = 0;
+        virtual void logPrintf(LoggerInfo &info, const char *fmt, ...) = 0;
 
         virtual void setConsoleOutput(bool enable) = 0;
     };

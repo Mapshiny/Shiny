@@ -15,7 +15,7 @@ public:
     explicit PtrBuffer(void* _ptr, size_t _len) : PtrController(_ptr, _len) {}
     explicit PtrBuffer(void* _ptr, size_t _len, size_t _capacity) : PtrController(_ptr, _len, _capacity) {}
 
-    ~PtrBuffer() {}
+    ~PtrBuffer() { reset();}
     PtrBuffer(const PtrBuffer& other) = delete;
     PtrBuffer& operator=(const PtrBuffer& other) = delete;
 
