@@ -14,7 +14,7 @@
 
 ## 🐣 前言
 
-Shiny 是基于[mmap](./docs/mmap.md)的Linux轻量级日志模块, 目前仅支持Linux环境。它的核心是通过mmap对文件进行映射一片固定大小的内存空间, 并且通过该内存空间进行日志的高速缓存, 最终通过write进行日志的写入。mmap对日志进行持久化的高速缓存, 保证了日志的高可靠性, 即不丢失日志。
+Shiny 是基于[mmap](https://blog.csdn.net/bie_niu1992/article/details/89967045)的Linux轻量级日志模块, 目前仅支持Linux环境。它的核心是通过mmap对文件进行映射一片固定大小的内存空间, 并且通过该内存空间进行日志的高速缓存, 最终通过write进行日志的写入。mmap对日志进行持久化的高速缓存, 保证了日志的高可靠性, 即不丢失日志。
 
 项目提供了简单的日志接口, 主要包括：获取单例的logger、配置日志文件路径、设置日志等级等。同时, 对多线程打印日志进行了并发控制, 避免多线程打印日志产生的race condition。
 
@@ -63,18 +63,23 @@ $ make
 ## 📚 <span id="docss">文档</span>
 
 * mmap
-  * [什么是mmap](./docs/mmap.md)
+  * [Unix环境编程之内存映射(mmap)](https://blog.csdn.net/bie_niu1992/article/details/89967045)
 
 * Shiny基本使用
   * [Shiny的简单使用](./docs/shiny.md)
   
-* example
+* sample
 
 待续...
 
 ## 📅 TODO
 
-待续...
+项目仍有很多待完善的地方, 其中已知的有：
+
+* 异常处理不恰当可能会造成内存泄漏，需要对异常后进行适当的roll back。代码中的malloc可能出现分配内存失败的情况，需要进行适当的处理，Shiny仅仅抛出了`bad alloc`而未处理
+
+更多潜在的逻辑、bug有待排查和改进
+
 
 ## 📀 参考资料
 

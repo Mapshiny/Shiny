@@ -50,7 +50,7 @@ namespace shiny{
 
     }
 
-
+    /*
     void LoggerImpl::log(const std::string& data) {
         if (data == "" || !_isConfigured)   return;
 
@@ -67,7 +67,8 @@ namespace shiny{
         }
         
     }
-
+    */
+   
     void LoggerImpl::flush() {
         if (!_isConfigured)   return;
         _conditionAsync.notify_all();

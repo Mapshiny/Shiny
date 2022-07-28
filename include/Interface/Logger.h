@@ -41,7 +41,7 @@ namespace shiny {
 
         virtual ~Logger() {};
         virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) = 0;
-        virtual void log(const std::string& data) = 0;
+        // virtual void log(const std::string& data) = 0;
 
         virtual void flush() = 0;
         virtual void close() = 0;

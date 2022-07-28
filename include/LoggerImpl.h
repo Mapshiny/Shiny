@@ -29,7 +29,7 @@ public:
 
     virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) override;
 
-    virtual void log(const std::string& data)  override; 
+    // virtual void log(const std::string& data)  override; 
 
     virtual void flush() override;
     virtual void close() override;
