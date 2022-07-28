@@ -12,6 +12,25 @@ namespace shiny{
         return &logger;
     }
     
+    LoggerImpl::~LoggerImpl() {
+        if (_logFile != nullptr) {
+            fclose(_logFile);
+            _logFile = nullptr;
+        }
+        if (_logMemBufer != nullptr) {
+            delete[] _logMemBufer;
+            _logMemBufer = nullptr;
+        }
+        if (_logController != nullptr) {
+            delete _logController;
+            _logController = nullptr;
+        }
+        if (_asyncThread != nullptr) {
+            delete _asyncThread;
+            _asyncThread = nullptr;
+        }
+    }
+
     void LoggerImpl::config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) {
         if (_isConfigured || logDir == "" || logFileName == "") {
             return;
@@ -68,7 +87,7 @@ namespace shiny{
         
     }
     */
-   
+
     void LoggerImpl::flush() {
         if (!_isConfigured)   return;
         _conditionAsync.notify_all();

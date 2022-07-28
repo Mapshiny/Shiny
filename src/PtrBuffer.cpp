@@ -5,6 +5,10 @@
 
 namespace shiny {
 
+PtrBuffer::~PtrBuffer() {
+    reset();
+}
+
 void PtrBuffer::reset() {
     _pos = 0;
     _size = 0;

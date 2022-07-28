@@ -25,7 +25,7 @@ class LoggerImpl : public Logger {
 public:
     LoggerImpl() : _isConfigured(false), _consoleOutput(false), _logLevel(LOG_DEBUG), 
                     _logMode(LogSync), _logMmap(), _logMemBufer(nullptr), _logController(nullptr) {};
-    virtual ~LoggerImpl(){};
+    virtual ~LoggerImpl();
 
     virtual void config(const std::string& logDir, const std::string& cacheDir, const std::string& logFileName, LogMode mode) override;
 

@@ -8,16 +8,18 @@ int main() {
     shiny::Logger *logger = shiny::Logger::getLogger();
     
     logger->config("./logdir", "./mmapdir", "logtest", shiny::LogSync);
-    logger->setConsoleOutput(true);
+    logger->setConsoleOutput(false);
 
     shiny::LoggerInfo info(shiny::LOG_DEBUG, "testfilename");
     int i = 0;
-    while (i++ < 10) {
+    clock_t start = clock();
+    while (i < 100) {
         logger->logPrint(info, "this is a log!");
         // sleep(1);
+        ++i;
     }
-    
-    // logger->logPrint(nullptr, "hello world");
+    clock_t end = clock();
+    std::cout << "time: " << (end - start) / (double)CLOCKS_PER_SEC << std::endl;
 
     return 0;
 }
